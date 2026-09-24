@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LexiAI — Legal Document Generator</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #070b16;
+    --card: #101728;
+    --card2: #151d32;
+    --border: #263451;
+    --text: #eef2ff;
+    --muted: #9ba8c7;
+    --purple: #8b5cf6;
+    --cyan: #06b6d4;
+    --green: #10b981;
+    --red: #ef4444;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(139,92,246,.18),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 80%,
+            rgba(6,182,212,.12),
+            transparent 30%
+        ),
+        var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+/* ================= HEADER ================= */
+
+header {
+    padding: 22px 6%;
+    border-bottom: 1px solid var(--border);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: rgba(7,11,22,.85);
+    backdrop-filter: blur(15px);
+
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    width: 45px;
+    height: 45px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--purple),
+            var(--cyan)
+        );
+
+    box-shadow:
+        0 0 25px rgba(139,92,246,.5);
+
+    font-size: 23px;
+}
+
+.logo h1 {
+    font-size: 22px;
+}
+
+.logo span {
+    color: #a78bfa;
+}
+
+.badge {
+    padding: 8px 13px;
+    border-radius: 20px;
+
+    background: rgba(16,185,129,.12);
+    border: 1px solid rgba(16,185,129,.4);
+
+    color: #6ee7b7;
+    font-size: 13px;
+}
+
+/* ================= HERO ================= */
+
+.hero {
+    text-align: center;
+    padding: 55px 20px 35px;
+}
+
+.hero h2 {
+    font-size: clamp(34px, 6vw, 65px);
+
+    background:
+        linear-gradient(
+            90deg,
+            #fff,
+            #a78bfa,
+            #22d3ee
+        );
+
+    -webkit-background-clip: text;
+    color: transparent;
+
+    margin-bottom: 15px;
+}
+
+.hero p {
+    color: var(--muted);
+    max-width: 700px;
+    margin: auto;
+    line-height: 1.7;
+}
+
+/* ================= MAIN ================= */
+
+.container {
+    width: min(1250px, 94%);
+    margin: auto;
+
+    display: grid;
+    grid-template-columns: 400px 1fr;
+
+    gap: 25px;
+
+    padding-bottom: 60px;
+}
+
+/* ================= CARDS ================= */
+
+.card {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(21,29,50,.96),
+            rgba(10,16,30,.96)
+        );
+
+    border: 1px solid var(--border);
+
+    border-radius: 20px;
+
+    padding: 25px;
+
+    box-shadow:
+        0 15px 50px rgba(0,0,0,.25);
+}
+
+.card h3 {
+    margin-bottom: 20px;
+}
+
+.card-subtitle {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+/* ================= DOCUMENT TYPES ================= */
+
+.templates {
+    display: grid;
+    gap: 10px;
+}
+
+.template {
+    padding: 15px;
+
+    border: 1px solid var(--border);
+    border-radius: 13px;
+
+    cursor: pointer;
+
+    background: rgba(255,255,255,.02);
+
+    transition: .25s;
+}
+
+.template:hover {
+    border-color: var(--purple);
+    transform: translateY(-2px);
+}
+
+.template.active {
+    border-color: var(--cyan);
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(139,92,246,.18),
+            rgba(6,182,212,.08)
+        );
+
+    box-shadow:
+        0 0 20px rgba(139,92,246,.12);
+}
+
+.template-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.template-description {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* ================= FORM ================= */
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #cbd5e1;
+
+    font-size: 13px;
+
+    font-weight: bold;
+}
+
+input,
+select,
+textarea {
+
+    width: 100%;
+
+    padding: 13px 14px;
+
+    border-radius: 10px;
+
+    border: 1px solid var(--border);
+
+    outline: none;
+
+    background: #090f1e;
+
+    color: white;
+
+    font-family: inherit;
+
+    transition: .2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--purple);
+
+    box-shadow:
+        0 0 0 3px rgba(139,92,246,.12);
+}
+
+textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+/* ================= BUTTON ================= */
+
+.generate-btn {
+
+    width: 100%;
+
+    padding: 15px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            100deg,
+            #7c3aed,
+            #8b5cf6,
+            #0891b2
+        );
+
+    box-shadow:
+        0 8px 25px rgba(139,92,246,.25);
+
+    transition: .25s;
+}
+
+.generate-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 35px rgba(139,92,246,.4);
+}
+
+/* ================= DOCUMENT ================= */
+
+.document-card {
+    min-height: 700px;
+}
+
+.document-toolbar {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 15px;
+
+    flex-wrap: wrap;
+}
+
+.document-toolbar h3 {
+    margin: 0;
+}
+
+.toolbar-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.small-btn {
+
+    border: 1px solid var(--border);
+
+    background: #0b1222;
+
+    color: #dbeafe;
+
+    padding: 9px 13px;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.small-btn:hover {
+    border-color: var(--cyan);
+}
+
+.document {
+
+    min-height: 600px;
+
+    background: #fff;
+
+    color: #111827;
+
+    border-radius: 10px;
+
+    padding: 50px;
+
+    line-height: 1.75;
+
+    box-shadow:
+        0 15px 50px rgba(0,0,0,.3);
+
+    overflow-wrap: break-word;
+}
+
+.document h1 {
+    text-align: center;
+    font-size: 25px;
+    margin-bottom: 30px;
+}
+
+.document h2 {
+    font-size: 17px;
+    margin-top: 25px;
+    margin-bottom: 8px;
+}
+
+.document p {
+    margin-bottom: 12px;
+}
+
+.signature {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 50px;
+
+    margin-top: 60px;
+}
+
+.signature-line {
+    border-top: 1px solid #111827;
+
+    padding-top: 8px;
+}
+
+/* ================= AI STATUS ================= */
+
+.ai-status {
+
+    display: none;
+
+    margin-bottom: 15px;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(139,92,246,.1);
+
+    border: 1px solid rgba(139,92,246,.3);
+
+    color: #c4b5fd;
+
+    font-size: 13px;
+}
+
+.ai-status.show {
+    display: block;
+}
+
+.dot {
+
+    display: inline-block;
+
+    width: 7px;
+    height: 7px;
+
+    background: #a78bfa;
+
+    border-radius: 50%;
+
+    margin-right: 7px;
+
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+
+    50% {
+        opacity: .2;
+    }
+
+}
+
+/* ================= DISCLAIMER ================= */
+
+.disclaimer {
+
+    width: min(1250px,94%);
+
+    margin: 0 auto 35px;
+
+    padding: 15px 18px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(245,158,11,.07);
+
+    border: 1px solid rgba(245,158,11,.25);
+
+    color: #fcd34d;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:900px) {
+
+    .container {
+        grid-template-columns: 1fr;
+    }
+
+    header {
+        position: relative;
+    }
+
+}
+
+@media(max-width:600px) {
+
+    .document {
+        padding: 25px;
+    }
+
+    .signature {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+
+<!-- ================= HEADER ================= -->
+
+<header>
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            ⚖️
+        </div>
+
+        <h1>
+            Lexi<span>AI</span>
+        </h1>
+
+    </div>
+
+    <div class="badge">
+        ● AI Drafting Assistant
+    </div>
+
+</header>
+
+
+<!-- ================= HERO ================= -->
+
+<section class="hero">
+
+    <h2>
+        AI Legal Document Generator
+    </h2>
+
+    <p>
+        Create structured legal document drafts in seconds.
+        Select a document type, provide the relevant information,
+        and generate an editable draft.
+    </p>
+
+</section>
+
+
+<!-- ================= DISCLAIMER ================= -->
+
+<div class="disclaimer">
+
+    ⚠️ <strong>Important:</strong>
+    This application creates document drafts for informational
+    and editing purposes. It does not provide legal advice,
+    establish an attorney-client relationship, or guarantee
+    that a document complies with applicable law.
+    Have important documents reviewed by a qualified lawyer.
+
+</div>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="container">
+
+
+<!-- ================= LEFT ================= -->
+
+<section class="card">
+
+    <h3>
+        📄 Choose Document
+    </h3>
+
+    <p class="card-subtitle">
+        Select the type of document you want to draft.
+    </p>
+
+
+    <div class="templates">
+
+
+        <div class="template active"
+             data-type="nda"
+             onclick="selectTemplate(this)">
+
+            <div class="template-title">
+                🔐 Non-Disclosure Agreement
+            </div>
+
+            <div class="template-description">
+                Confidentiality agreement between parties.
+            </div>
+
+        </div>
+
+
+        <div class="template"
+             data-type="rental"
+             onclick="selectTemplate(this)">
+
+            <div class="template-title">
+                🏠 Rental Agreement
+            </div>
+
+            <div class="template-description">
+                Basic residential rental document draft.
+            </div>
+
+        </div>
+
+
+        <div class="template"
+             data-type="employment"
+             onclick="selectTemplate(this)">
+
+            <div class="template-title">
+                💼 Employment Agreement
+            </div>
+
+            <div class="template-description">
+                Employment terms and responsibilities.
+            </div>
+
+        </div>
+
+
+        <div class="template"
+             data-type="partnership"
+             onclick="selectTemplate(this)">
+
+            <div class="template-title">
+                🤝 Partnership Agreement
+            </div>
+
+            <div class="template-description">
+                Basic business partnership draft.
+            </div>
+
+        </div>
+
+
+        <div class="template"
+             data-type="demand"
+             onclick="selectTemplate(this)">
+
+            <div class="template-title">
+                💰 Payment Demand Letter
+            </div>
+
+            <div class="template-description">
+                Formal request for outstanding payment.
+            </div>
+
+        </div>
+
+
+        <div class="template"
+             data-type="custom"
+             onclick="selectTemplate(this)">
+
+            <div class="template-title">
+                ✨ Custom Document
+            </div>
+
+            <div class="template-description">
+                Describe what you want the AI to draft.
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <br>
+
+
+    <div class="form-group">
+
+        <label>
+            Your Name / Party 1
+        </label>
+
+        <input
+            id="party1"
+            placeholder="Example: Arun Kumar"
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            Other Party / Party 2
+        </label>
+
+        <input
+            id="party2"
+            placeholder="Example: ABC Technologies Pvt Ltd"
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            Effective Date
+        </label>
+
+        <input
+            type="date"
+            id="date"
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            Location / Jurisdiction
+        </label>
+
+        <input
+            id="location"
+            placeholder="Example: Chennai, Tamil Nadu, India"
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            Additional Details
+        </label>
+
+        <textarea
+            id="details"
+            placeholder="Describe important terms, obligations, payment information, property details, confidentiality requirements, etc."
+        ></textarea>
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            Document Language
+        </label>
+
+        <select id="language">
+
+            <option>English</option>
+            <option>Tamil</option>
+            <option>Hindi</option>
+
+        </select>
+
+    </div>
+
+
+    <button
+        class="generate-btn"
+        onclick="generateDocument()">
+
+        🤖 Generate Legal Draft
+
+    </button>
+
+</section>
+
+
+<!-- ================= RIGHT ================= -->
+
+<section class="card document-card">
+
+    <div class="document-toolbar">
+
+        <h3>
+            📑 Generated Document
+        </h3>
+
+        <div class="toolbar-buttons">
+
+            <button
+                class="small-btn"
+                onclick="copyDocument()">
+
+                📋 Copy
+
+            </button>
+
+            <button
+                class="small-btn"
+                onclick="downloadDocument()">
+
+                💾 Download
+
+            </button>
+
+            <button
+                class="small-btn"
+                onclick="window.print()">
+
+                🖨️ Print / PDF
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="status"
+        class="ai-status">
+
+        <span class="dot"></span>
+
+        AI is preparing your document...
+
+    </div>
+
+
+    <article
+        id="document"
+        class="document">
+
+        <h1>
+            YOUR LEGAL DOCUMENT
+        </h1>
+
+        <p>
+            Select a document type and enter the relevant
+            information on the left.
+        </p>
+
+        <p>
+            Your generated draft will appear here.
+        </p>
+
+    </article>
+
+</section>
+
+</main>
+
+
+<script>
+
+/* =========================================
+   VARIABLES
+========================================= */
+
+let selectedType = "nda";
+
+
+/* =========================================
+   TEMPLATE SELECTION
+========================================= */
+
+function selectTemplate(element) {
+
+    document
+        .querySelectorAll(".template")
+        .forEach(item => {
+
+            item.classList.remove("active");
+
+        });
+
+    element.classList.add("active");
+
+    selectedType =
+        element.dataset.type;
+
+}
+
+
+/* =========================================
+   SAFE HTML
+========================================= */
+
+function escapeHTML(value) {
+
+    return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* =========================================
+   GENERATE DOCUMENT
+========================================= */
+
+function generateDocument() {
+
+    const party1 =
+        escapeHTML(
+            document.getElementById("party1").value
+        ) || "Party 1";
+
+    const party2 =
+        escapeHTML(
+            document.getElementById("party2").value
+        ) || "Party 2";
+
+    const date =
+        escapeHTML(
+            document.getElementById("date").value
+        ) || "________________";
+
+    const location =
+        escapeHTML(
+            document.getElementById("location").value
+        ) || "________________";
+
+    const details =
+        escapeHTML(
+            document.getElementById("details").value
+        ) || "No additional terms provided.";
+
+    const language =
+        document.getElementById("language").value;
+
+
+    const status =
+        document.getElementById("status");
+
+    status.classList.add("show");
+
+
+    /*
+        Simulates AI processing.
+
+        Later you can replace this section with:
+
+        fetch("/api/generate", {
+            method: "POST",
+            body: JSON.stringify(...)
+        })
+
+        and connect your own AI backend.
+    */
+
+
+    setTimeout(() => {
+
+        let html = "";
+
+
+        if(selectedType === "nda") {
+
+            html = `
+
+                <h1>
+                    NON-DISCLOSURE AGREEMENT
+                </h1>
+
+                <p>
+                    <strong>Effective Date:</strong>
+                    ${date}
+                </p>
+
+                <p>
+                    This Non-Disclosure Agreement
+                    ("Agreement") is entered into between
+                    <strong>${party1}</strong>
+                    and
+                    <strong>${party2}</strong>.
+                </p>
+
+                <h2>1. Purpose</h2>
+
+                <p>
+                    The parties may exchange confidential
+                    information for legitimate business or
+                    professional purposes. The receiving party
+                    agrees to handle such information
+                    appropriately and use it only for the
+                    agreed purpose.
+                </p>
+
+                <h2>2. Confidential Information</h2>
+
+                <p>
+                    Confidential information may include
+                    business information, technical information,
+                    financial information, customer information,
+                    plans, designs, documents, software,
+                    processes, and other non-public information.
+                </p>
+
+                <h2>3. Restrictions</h2>
+
+                <p>
+                    The receiving party should not disclose
+                    confidential information to unauthorized
+                    persons except where disclosure is required
+                    by applicable law or otherwise authorized
+                    in writing.
+                </p>
+
+                <h2>4. Additional Terms</h2>
+
+                <p>
+                    ${details}
+                </p>
+
+                <h2>5. Governing Law / Location</h2>
+
+                <p>
+                    Proposed jurisdiction or location:
+                    <strong>${location}</strong>.
+                    The parties should obtain legal advice
+                    regarding the appropriate governing-law
+                    clause.
+                </p>
+
+                <div class="signature">
+
+                    <div>
+                        <div class="signature-line">
+                            ${party1}
+                        </div>
+                        <small>Party 1</small>
+                    </div>
+
+                    <div>
+                        <div class="signature-line">
+                            ${party2}
+                        </div>
+                        <small>Party 2</small>
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+
+        else if(selectedType === "rental") {
+
+            html = `
+
+                <h1>
+                    RESIDENTIAL RENTAL AGREEMENT
+                </h1>
+
+                <p>
+                    <strong>Date:</strong> ${date}
+                </p>
+
+                <p>
+                    This draft is between
+                    <strong>${party1}</strong>
+                    ("Landlord")
+                    and
+                    <strong>${party2}</strong>
+                    ("Tenant").
+                </p>
+
+                <h2>1. Property</h2>
+
+                <p>
+                    The rental property and address should
+                    be described completely by the parties
+                    before signing.
+                </p>
+
+                <h2>2. Rent</h2>
+
+                <p>
+                    Monthly rent, security deposit, due date,
+                    payment method and applicable late-payment
+                    provisions should be specified.
+                </p>
+
+                <h2>3. Term</h2>
+
+                <p>
+                    The beginning and ending dates of the
+                    tenancy should be inserted by the parties.
+                </p>
+
+                <h2>4. Additional Terms</h2>
+
+                <p>
+                    ${details}
+                </p>
+
+                <h2>5. Location</h2>
+
+                <p>
+                    Property / jurisdiction:
+                    <strong>${location}</strong>
+                </p>
+
+                <div class="signature">
+
+                    <div>
+                        <div class="signature-line">
+                            ${party1}
+                        </div>
+                        <small>Landlord</small>
+                    </div>
+
+                    <div>
+                        <div class="signature-line">
+                            ${party2}
+                        </div>
+                        <small>Tenant</small>
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+
+        else if(selectedType === "employment") {
+
+            html = `
+
+                <h1>
+                    EMPLOYMENT AGREEMENT
+                </h1>
+
+                <p>
+                    <strong>Effective Date:</strong>
+                    ${date}
+                </p>
+
+                <p>
+                    This draft records proposed employment
+                    terms between
+                    <strong>${party1}</strong>
+                    ("Employer")
+                    and
+                    <strong>${party2}</strong>
+                    ("Employee").
+                </p>
+
+                <h2>1. Position</h2>
+
+                <p>
+                    The position, responsibilities,
+                    reporting structure and workplace should
+                    be specified.
+                </p>
+
+                <h2>2. Compensation</h2>
+
+                <p>
+                    Salary, payment schedule, benefits,
+                    incentives and applicable deductions should
+                    be specified.
+                </p>
+
+                <h2>3. Duties</h2>
+
+                <p>
+                    The employee is expected to perform the
+                    responsibilities agreed between the parties
+                    and comply with applicable workplace policies.
+                </p>
+
+                <h2>4. Additional Terms</h2>
+
+                <p>
+                    ${details}
+                </p>
+
+                <h2>5. Jurisdiction</h2>
+
+                <p>
+                    Proposed location:
+                    <strong>${location}</strong>
+                </p>
+
+                <div class="signature">
+
+                    <div>
+                        <div class="signature-line">
+                            ${party1}
+                        </div>
+                        <small>Employer</small>
+                    </div>
+
+                    <div>
+                        <div class="signature-line">
+                            ${party2}
+                        </div>
+                        <small>Employee</small>
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+
+        else if(selectedType === "partnership") {
+
+            html = `
+
+                <h1>
+                    PARTNERSHIP AGREEMENT
+                </h1>
+
+                <p>
+                    <strong>Effective Date:</strong>
+                    ${date}
+                </p>
+
+                <p>
+                    This draft is prepared for
+                    <strong>${party1}</strong>
+                    and
+                    <strong>${party2}</strong>
+                    concerning a proposed business partnership.
+                </p>
+
+                <h2>1. Business Purpose</h2>
+
+                <p>
+                    The parties should clearly describe the
+                    business purpose and activities of the
+                    proposed partnership.
+                </p>
+
+                <h2>2. Contributions</h2>
+
+                <p>
+                    Each partner's financial, property,
+                    intellectual-property or other contributions
+                    should be documented.
+                </p>
+
+                <h2>3. Profit and Loss</h2>
+
+                <p>
+                    The parties should specify the agreed
+                    method for allocation of profits and losses.
+                </p>
+
+                <h2>4. Additional Terms</h2>
+
+                <p>
+                    ${details}
+                </p>
+
+                <h2>5. Jurisdiction</h2>
+
+                <p>
+                    Proposed location:
+                    <strong>${location}</strong>
+                </p>
+
+                <div class="signature">
+
+                    <div>
+                        <div class="signature-line">
+                            ${party1}
+                        </div>
+                        <small>Partner 1</small>
+                    </div>
+
+                    <div>
+                        <div class="signature-line">
+                            ${party2}
+                        </div>
+                        <small>Partner 2</small>
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+
+        else if(selectedType === "demand") {
+
+            html = `
+
+                <h1>
+                    PAYMENT DEMAND LETTER
+                </h1>
+
+                <p>
+                    <strong>Date:</strong> ${date}
+                </p>
+
+                <p>
+                    <strong>From:</strong> ${party1}
+                </p>
+
+                <p>
+                    <strong>To:</strong> ${party2}
+                </p>
+
+                <h2>Subject: Outstanding Payment</h2>
+
+                <p>
+                    This letter concerns an outstanding payment
+                    allegedly owed to the sender.
+                </p>
+
+                <h2>1. Background</h2>
+
+                <p>
+                    The relevant transaction, invoice,
+                    agreement or obligation should be described
+                    accurately here.
+                </p>
+
+                <h2>2. Amount Claimed</h2>
+
+                <p>
+                    The amount allegedly outstanding should be
+                    stated together with supporting invoice or
+                    transaction information.
+                </p>
+
+                <h2>3. Request</h2>
+
+                <p>
+                    The sender requests that the outstanding
+                    amount be addressed within the applicable
+                    contractual or legal period.
+                </p>
+
+                <h2>4. Additional Details</h2>
+
+                <p>
+                    ${details}
+                </p>
+
+                <h2>5. Location</h2>
+
+                <p>
+                    <strong>${location}</strong>
+                </p>
+
+                <div class="signature">
+
+                    <div>
+                        <div class="signature-line">
+                            ${party1}
+                        </div>
+                        <small>Sender</small>
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+
+        else {
+
+            html = `
+
+                <h1>
+                    CUSTOM LEGAL DOCUMENT DRAFT
+                </h1>
+
+                <p>
+                    <strong>Date:</strong>
+                    ${date}
+                </p>
+
+                <p>
+                    <strong>Party 1:</strong>
+                    ${party1}
+                </p>
+
+                <p>
+                    <strong>Party 2:</strong>
+                    ${party2}
+                </p>
+
+                <h2>Requested Document</h2>
+
+                <p>
+                    ${details}
+                </p>
+
+                <h2>Jurisdiction / Location</h2>
+
+                <p>
+                    ${location}
+                </p>
+
+                <h2>Drafting Note</h2>
+
+                <p>
+                    This is a preliminary document structure.
+                    Appropriate legal provisions should be
+                    added or reviewed based on the specific
+                    transaction, parties, applicable law and
+                    jurisdiction.
+                </p>
+
+            `;
+
+        }
+
+
+        document.getElementById("document").innerHTML = html;
+
+        status.classList.remove("show");
+
+    }, 900);
+
+}
+
+
+/* =========================================
+   COPY
+========================================= */
+
+function copyDocument() {
+
+    const text =
+        document
+        .getElementById("document")
+        .innerText;
+
+    navigator.clipboard
+        .writeText(text)
+        .then(() => {
+
+            alert("Document copied!");
+
+        });
+
+}
+
+
+/* =========================================
+   DOWNLOAD
+========================================= */
+
+function downloadDocument() {
+
+    const text =
+        document
+        .getElementById("document")
+        .innerText;
+
+    const blob =
+        new Blob(
+            [text],
+            { type: "text/plain" }
+        );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const link =
+        document.createElement("a");
+
+    link.href = url;
+
+    link.download =
+        "AI-Legal-Document.txt";
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+
+}
+
+
+/* =========================================
+   DATE
+========================================= */
+
+document.getElementById("date").value =
+    new Date().toISOString().split("T")[0];
+
+</script>
+
+
+</body>
+</html>
